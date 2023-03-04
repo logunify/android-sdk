@@ -1,3 +1,6 @@
+[![Version](https://img.shields.io/maven-central/v/com.logunify/android-sdk)](https://central.sonatype.com/artifact/com.logunify/android-sdk/0.1.0/)
+[![License](https://img.shields.io/github/license/logunify/android-sdk)]((https://central.sonatype.com/artifact/com.logunify/android-sdk/0.1.0/))
+
 # LogUnify Android SDK
 
 ## Build 
