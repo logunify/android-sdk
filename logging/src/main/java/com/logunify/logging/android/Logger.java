@@ -23,7 +23,7 @@ import com.logunify.logging.event.Event;
 import java.util.concurrent.TimeUnit;
 
 public class Logger {
-    static final String CONFIG_KEY_RECEIVER_URL = "logunifyReceiverUrl";
+    static final String CONFIG_KEY_RECEIVER_URL = "LogunifyReceiverUrl";
     static final String CONFIG_KEY_API_KEY = "LogunifyAPIKey";
 
     static final String APP_METADATA_KEY_VERSION_NAME = "versionName";
@@ -32,9 +32,9 @@ public class Logger {
 
     static final String FLUSH_WORKER_TAG = "com.logunify.logging.android.LogWorker.unconstrained";
     static final String INTERVAL_WORKER_TAG = "com.logunify.logging.android.LogWorker.interval";
-    static final String ON_ENQUEUE_WORKER_TAG = "com.logunify.logging.android.LogWorker.on_enqueue";
+    static final String ON_ENQUEUE_WORKER_TAG = "com.logunify.logging.android.LogWorker.onEnqueue";
 
-    static final String RECEIVER_URL = "https://localhost:3000";
+    static final String RECEIVER_URL = "https://localhost:3000/api/events/_bulk";
 
     //Maximum number of messages to cache when offline.
     final static int MAX_OFFLINE_MESSAGES = 5000;

@@ -27,23 +27,18 @@ public class HttpClient {
     private final OkHttpClient client = new OkHttpClient();
     private final String receiverUrl;
     private final String apiKey;
+
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    /**
-     * Constructor.
-     *
-     * @param receiverUrl the receiver (api) url
-     * @param appToken    the logsene app token
-     */
-    public HttpClient(String receiverUrl, String appToken) {
+    public HttpClient(String receiverUrl, String apiKey) {
         Utils.requireNonNull(receiverUrl);
-        Utils.requireNonNull(appToken);
+        Utils.requireNonNull(apiKey);
         receiverUrl = receiverUrl.trim();
         if (receiverUrl.endsWith("/")) {
             receiverUrl = receiverUrl.substring(0, receiverUrl.length() - 1);
         }
         this.receiverUrl = receiverUrl;
-        this.apiKey = appToken;
+        this.apiKey = apiKey;
     }
 
     RequestBody buildRequestBody(List<EventRecord> events, AppMetadata appMetadata) {
@@ -66,9 +61,13 @@ public class HttpClient {
     }
 
     public ApiResponse sendEvents(List<EventRecord> events, AppMetadata appMetadata) throws IOException {
-        // @TODO: set api token
         Request request = new Request.Builder()
-                .url(String.format("%s/api/events/_bulk", receiverUrl))
+                .addHeader(
+                        "X-Auth-Token", apiKey)
+                .addHeader(
+                        "Content-Type", "application/json; charset=utf-8"
+                )
+                .url(String.format("%s", receiverUrl))
                 .post(buildRequestBody(events, appMetadata))
                 .build();
         Response response = client.newCall(request).execute();
