@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id "com.jfrog.artifactory" version "4.29.0"
     id "maven-publish"
+    id 'signing'
 }
 
 android {
@@ -46,12 +47,56 @@ android {
 
 afterEvaluate {
     publishing {
+        repositories {
+            maven {
+                // change URLs to point to your repos, e.g. http://my.org/repo
+                def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                credentials(PasswordCredentials) {
+                    username sonatypeUsername
+                    password sonatypePassword
+                }
+            }
+        }
         publications {
             release(MavenPublication) {
                 from components.release
                 groupId = 'com.logunify'
-                artifactId = 'android_logging'
-                version = '1.0'
+                artifactId = 'android-sdk'
+                version = '0.1.0'
+
+                pom {
+                    name = 'LogUnify Android SDK'
+                    description = 'LogUnify Android SDK'
+                    url = 'https://github.com/logunify/android-sdk'
+
+                    signing {
+                        sign publishing.publications.release
+                        sign configurations.archives
+                    }
+
+                    scm {
+                        connection = 'scm:git:https://github.com/logunify/android-sdk'
+                        developerConnection = 'scm:git:ssh://github.com/logunify/android-sdk'
+                        url = 'https://www.logunify.com/'
+                    }
+
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'dyang415'
+                            name = 'Daiyi Yang'
+                            email = 'daiyi@logunify.com'
+                        }
+                    }
+                }
             }
         }
     }
@@ -59,31 +104,15 @@ afterEvaluate {
 
 dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.appcompat:appcompat:1.5.0'
-    implementation 'com.google.android.material:material:1.6.1'
-    implementation 'androidx.work:work-runtime:2.7.1'
-    implementation "com.google.protobuf:protobuf-java:3.21.4"
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.work:work-runtime:2.8.0'
+    implementation "com.google.protobuf:protobuf-java:3.21.12"
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'com.squareup.okhttp3:mockwebserver:4.10.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation 'androidx.work:work-testing:2.7.1'
-}
-
-
-artifactory {
-    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
-    publish {
-        repository {
-            repoKey = 'libs-release'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-        }
-        defaults {
-            publications('release')
-        }
-    }
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.work:work-testing:2.8.0'
 }
