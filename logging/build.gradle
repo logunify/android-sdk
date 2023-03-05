@@ -62,9 +62,9 @@ afterEvaluate {
         publications {
             release(MavenPublication) {
                 from components.release
-                groupId = 'com.logunify'
+                groupId = rootProject.group
                 artifactId = 'android-sdk'
-                version = '0.1.0'
+                version = rootProject.version
 
                 pom {
                     name = 'LogUnify Android SDK'
