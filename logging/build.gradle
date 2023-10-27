@@ -1,0 +1,118 @@
+plugins {
+    id 'com.android.library'
+    id "com.jfrog.artifactory" version "4.29.0"
+    id "maven-publish"
+    id 'signing'
+}
+
+android {
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 19
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        multiDexEnabled true
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        aarMetadata {
+            minCompileSdk = 29
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    sourceSets {
+        androidTest.manifest.srcFile "src/androidTest/AndroidManifest.xml"
+    }
+
+    publishing {
+        singleVariant('release') {
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                // change URLs to point to your repos, e.g. http://my.org/repo
+                def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                credentials(PasswordCredentials) {
+                    username sonatypeUsername
+                    password sonatypePassword
+                }
+            }
+        }
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = rootProject.group
+                artifactId = 'android-sdk'
+                version = rootProject.version
+
+                pom {
+                    name = 'LogUnify Android SDK'
+                    description = 'LogUnify Android SDK'
+                    url = 'https://github.com/logunify/android-sdk'
+
+                    signing {
+                        sign publishing.publications.release
+                        sign configurations.archives
+                    }
+
+                    scm {
+                        connection = 'scm:git:https://github.com/logunify/android-sdk'
+                        developerConnection = 'scm:git:ssh://github.com/logunify/android-sdk'
+                        url = 'https://www.logunify.com/'
+                    }
+
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'dyang415'
+                            name = 'Daiyi Yang'
+                            email = 'daiyi@logunify.com'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.work:work-runtime:2.8.0'
+    implementation "com.google.protobuf:protobuf-java:3.21.12"
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:4.10.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.work:work-testing:2.8.0'
+}

@@ -1,0 +1,25 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+plugins {
+    id 'com.android.application' version '7.2.2' apply false
+    id 'com.android.library' version '7.2.2' apply false
+    id "io.github.gradle-nexus.publish-plugin" version "1.2.0"
+}
+
+group = "com.logunify"
+version = "0.1.2"
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+
+            username = sonatypeUsername
+            password = sonatypePassword
+        }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
